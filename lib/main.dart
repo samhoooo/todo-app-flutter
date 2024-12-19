@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }
@@ -32,16 +32,36 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-
-  final List<Widget> _screens = [
-    MyTasks(),
-    CompletedTasks(),
-    Account(),
+  final List<String> _pageNames = ['My Tasks', 'Completed Tasks', 'Welcome'];
+  final List<Map<String, dynamic>> _tasks = [
+    {
+      'id': 1,
+      'title': 'Task 1',
+      'time': 'Fri, Apr 21 2:15 PM',
+      'isChecked': false
+    },
+    {
+      'id': 2,
+      'title': 'Task 2',
+      'time': 'Fri, Apr 21 2:15 PM',
+      'isChecked': false
+    },
+    {
+      'id': 3,
+      'title': 'Task 3',
+      'time': 'Fri, Apr 21 2:15 PM',
+      'isChecked': false
+    },
   ];
 
-  final List<String> _pageNames = ['My Tasks', 'Completed Tasks', 'Welcome'];
+  void _toggleTask(int taskId) {
+    setState(() {
+      int index = _tasks.indexWhere((task) => task['id'] == taskId);
+      _tasks[index]['isChecked'] = !_tasks[index]['isChecked'];
+    });
+  }
 
-  void _onItemTapped(int index) {
+  void _onBottomBarItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -49,12 +69,18 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _screens = [
+      MyTasks(tasks: _tasks, toggleTask: _toggleTask),
+      CompletedTasks(tasks: _tasks, toggleTask: _toggleTask),
+      const Account(),
+    ];
+
     return Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(100),
           child: AppBar(
             title: Text(_pageNames[_selectedIndex],
-                style: TextStyle(
+                style: const TextStyle(
                     color: Colors.white,
                     fontSize: 32,
                     fontWeight: FontWeight.bold)),
@@ -65,12 +91,12 @@ class _HomePageState extends State<HomePage> {
         body: _screens[_selectedIndex],
         floatingActionButton: FloatingActionButton(
             onPressed: () {},
-            child: const Icon(Icons.add, color: Colors.white),
             backgroundColor: Colors.green[400],
-            shape: CircleBorder()),
+            shape: const CircleBorder(),
+            child: const Icon(Icons.add, color: Colors.white)),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
+          onTap: _onBottomBarItemTapped,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
                 icon: Icon(Icons.format_list_bulleted), label: 'My Tasks'),
@@ -83,31 +109,24 @@ class _HomePageState extends State<HomePage> {
 }
 
 class MyTasks extends StatefulWidget {
+  final List<Map<String, dynamic>> tasks;
+  final Function(int) toggleTask;
+
+  const MyTasks({super.key, required this.tasks, required this.toggleTask});
+
   @override
   State<MyTasks> createState() => _MyTasksState();
 }
 
 class _MyTasksState extends State<MyTasks> {
-  final List<Map<String, dynamic>> tasks = [
-    {'title': 'Task 1', 'time': 'Fri, Apr 21 2:15 PM', 'isChecked': false},
-    {'title': 'Task 2', 'time': 'Fri, Apr 21 2:15 PM', 'isChecked': false},
-    {'title': 'Task 3', 'time': 'Fri, Apr 21 2:15 PM', 'isChecked': false},
-  ];
-
-  void _toggleTask(int index) {
-    setState(() {
-      tasks[index]['isChecked'] = !tasks[index]['isChecked'];
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView.builder(
-        itemCount: tasks.length,
+        itemCount: widget.tasks.length,
         itemBuilder: (context, index) {
           return Container(
-            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
@@ -123,18 +142,18 @@ class _MyTasksState extends State<MyTasks> {
             child: ListTile(
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                title: Text(tasks[index]['title']!,
+                title: Text(widget.tasks[index]['title']!,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     )),
-                subtitle: Text(tasks[index]['time']!),
+                subtitle: Text(widget.tasks[index]['time']!),
                 trailing: GestureDetector(
                     onTap: () {
-                      _toggleTask(index);
+                      widget.toggleTask(widget.tasks[index]['id']);
                     },
                     child: Icon(
-                        tasks[index]['isChecked']
+                        widget.tasks[index]['isChecked']
                             ? Icons.check_circle
                             : Icons.circle_outlined,
                         color: Colors.green,
@@ -147,15 +166,59 @@ class _MyTasksState extends State<MyTasks> {
 }
 
 class CompletedTasks extends StatelessWidget {
+  final List<Map<String, dynamic>> tasks;
+  final Function(int) toggleTask;
+  const CompletedTasks(
+      {super.key, required this.tasks, required this.toggleTask});
+
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('completed tasks'));
+    final completedTasks =
+        tasks.where((task) => task['isChecked'] == true).toList();
+    return Scaffold(
+      body: ListView.builder(
+        itemCount: completedTasks.length,
+        itemBuilder: (context, index) {
+          final task = completedTasks[index];
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 2,
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: ListTile(
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                title: Text(task['title'],
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    )),
+                subtitle: Text(task['time']!),
+                trailing: GestureDetector(
+                    onTap: () => toggleTask(task['id']),
+                    child: const Icon(Icons.check_circle,
+                        color: Colors.green, size: 28))),
+          );
+        },
+      ),
+    );
   }
 }
 
 class Account extends StatelessWidget {
+  const Account({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('account'));
+    return const Center(child: Text('account'));
   }
 }

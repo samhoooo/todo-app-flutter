@@ -121,9 +121,11 @@ class MyTasks extends StatefulWidget {
 class _MyTasksState extends State<MyTasks> {
   @override
   Widget build(BuildContext context) {
+    final pendingTasks =
+        widget.tasks.where((task) => task['isChecked'] == false).toList();
     return Scaffold(
       body: ListView.builder(
-        itemCount: widget.tasks.length,
+        itemCount: pendingTasks.length,
         itemBuilder: (context, index) {
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -142,22 +144,21 @@ class _MyTasksState extends State<MyTasks> {
             child: ListTile(
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                title: Text(widget.tasks[index]['title']!,
+                title: Text(pendingTasks[index]['title']!,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     )),
-                subtitle: Text(widget.tasks[index]['time']!),
-                trailing: GestureDetector(
-                    onTap: () {
-                      widget.toggleTask(widget.tasks[index]['id']);
-                    },
-                    child: Icon(
-                        widget.tasks[index]['isChecked']
-                            ? Icons.check_circle
-                            : Icons.circle_outlined,
-                        color: Colors.green,
-                        size: 28))),
+                subtitle: Text(pendingTasks[index]['time']!),
+                onTap: () {
+                  widget.toggleTask(pendingTasks[index]['id']);
+                },
+                trailing: Icon(
+                    pendingTasks[index]['isChecked']
+                        ? Icons.check_circle
+                        : Icons.circle_outlined,
+                    color: Colors.green,
+                    size: 28)),
           );
         },
       ),
@@ -203,10 +204,9 @@ class CompletedTasks extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     )),
                 subtitle: Text(task['time']!),
-                trailing: GestureDetector(
-                    onTap: () => toggleTask(task['id']),
-                    child: const Icon(Icons.check_circle,
-                        color: Colors.green, size: 28))),
+                onTap: () => toggleTask(task['id']),
+                trailing: const Icon(Icons.check_circle,
+                    color: Colors.green, size: 28)),
           );
         },
       ),

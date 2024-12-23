@@ -1,16 +1,66 @@
-# todo_app
+# Flutter Todo App
 
-A new Flutter project.
+A simple todo list application built with Flutter. The app allows users to manage daily tasks with basic CRUD operations.
+
+## Live Demo
+
+[View Demo](https://todo-app-flutter-sam.web.app/)
+
+## Features
+
+- Add new tasks with title and description
+- Mark tasks as completed with visual feedback
+- Edit existing tasks
+- Delete tasks
+- View completed tasks separately
+- Responsive design that works on mobile and web
+
+## Technologies Used
+
+- Flutter
+- Dart
+- Material Design
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+- Flutter SDK
+- Dart SDK
+- A code editor (VS Code, Android Studio, etc.)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Installation
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Clone the repository
+
+```
+git clone <repository-url>
+```
+
+2. Install dependencies
+
+```
+flutter pub get
+```
+
+3. Run the app
+
+```
+flutter run
+```
+
+### Building for Web
+
+```
+flutter build web
+```
+
+## Project Structure
+
+- `lib/models/` - Data models
+- `lib/screens/` - Screen widgets
+- `lib/widgets/` - Reusable widgets
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).

@@ -92,6 +92,9 @@ class _HomePageState extends State<HomePage> {
     if (taskToEdit != null) {
       _titleController.text = taskToEdit.title;
       _descriptionController.text = taskToEdit.description;
+    } else {
+      _titleController.text = '';
+      _descriptionController.text = '';
     }
     showModalBottomSheet(
       context: context,
